@@ -1,6 +1,5 @@
-
 import { Args, CombatStrategy, Engine, getTasks, Quest, Task } from "grimoire-kolmafia";
-import { myAdventures, visitUrl, runChoice } from "kolmafia";
+import { myAdventures, visitUrl, runChoice, print } from "kolmafia";
 import {
   $familiar,
   $familiars,
@@ -24,7 +23,13 @@ const args = Args.create("chroner-collector", "A script for farming chroner", {
 export function main(command?: string) {
   Args.fill(args, command);
 
-  const completed = args.turns < 0 ? () => false : () => myAdventures() === -args.turns;
+  const completed = args.turns < 0 ? () => false : () => myAdventures() <= -args.turns;
+
+  if (args.turns < 0) {
+    print(`Running chrono until you have ${-args.turns} left`);
+  } else {
+    print(`Running chrono for ${args.turns} turns`);
+  }
 
   const familiar = $familiars`reagnimated gnome, temporal riftlet, none`.find((f) => have(f));
   const famequip =
