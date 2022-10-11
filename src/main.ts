@@ -1,6 +1,8 @@
+
 import { Args, CombatStrategy, Engine, getTasks, Quest, Task } from "grimoire-kolmafia";
-import { myAdventures } from "kolmafia";
+import { myAdventures, visitUrl, runChoice } from "kolmafia";
 import {
+  $familiar,
   $familiars,
   $item,
   $location,
@@ -23,16 +25,31 @@ export function main(command?: string) {
   Args.fill(args, command);
 
   const completed = args.turns < 0 ? () => false : () => myAdventures() === -args.turns;
-  const familiar = $familiars`Reagnimated Gnome, Temporal Riftlet, none`.find((f) => have(f));
+
+  const familiar = $familiars`reagnimated gnome, temporal riftlet, none`.find((f) => have(f));
+  const famequip =
+    familiar === $familiar`reagnimated gnome` ? $item`gnomish housemaid's kgnee` : $item`stillsuit`;
+
 
   const ttt: Quest<Task> = {
     name: "TimeTwitchingTower",
     tasks: [
       {
+
         name: "Autumn-Aton",
         completed: () => completed() && AutumnAton.currentlyIn() !== null,
         do: () => AutumnAton.sendTo($locations`Globe Theatre Main Stage, The Dire Warren`),
         ready: () => AutumnAton.available(),
+      },
+      {
+        name: "Kgnee",
+        completed: () =>
+          !have($familiar`Reagnimated Gnome`) || have($item`gnomish housemaid's kgnee`),
+        do: (): void => {
+          visitUrl("arena.php");
+          runChoice(4);
+        },
+        outfit: { familiar: $familiar`Reagnimated Gnome` },
       },
       {
         name: "Chroner",
@@ -46,6 +63,7 @@ export function main(command?: string) {
             acc2: $item`time-twitching toolbelt`,
             acc3: $item`lucky gold ring`,
             familiar,
+            famequip,
           };
         },
         combat: new CombatStrategy().macro(

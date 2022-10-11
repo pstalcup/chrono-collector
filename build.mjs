@@ -8,14 +8,14 @@ const args = process.argv.slice(2);
 const watch = args.some((a) => a === "--watch" || a === "-w");
 
 build({
-  entryPoints: { "chroner-collector": "src/main.ts" },
+  entryPoints: { chrono: "src/main.ts" },
   bundle: true,
   minifySyntax: true,
   platform: "node",
   target: "rhino1.7.14",
   external: ["kolmafia"],
   plugins: [babel()],
-  outdir: "dist/scripts/chroner-collector",
+  outdir: "dist/scripts/chrono",
   watch,
   loader: { ".json": "text" },
   inject: ["./kolmafia-polyfill.js"],
